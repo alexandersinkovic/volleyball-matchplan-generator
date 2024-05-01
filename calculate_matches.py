@@ -4,14 +4,13 @@ import copy
 import random
 import csv
 
-NUMBER_OF_TEAMS = 34
-#NUMBER_OF_TEAMS = 15
-NUMBER_OF_TEAMMATES = 6
-#NUMBER_OF_TEAMMATES = 3
-TOTALOCCURENCES = NUMBER_OF_TEAMS * NUMBER_OF_TEAMMATES
-OUTPUTFILENAME = '34Teams6Rounds'
-USENAMELIST = True
 
+NUMBER_OF_TEAMS = 34
+NUMBER_OF_TEAMMATES = 6
+NUMBER_OF_FIELDS = 3
+TOTAL_OCCURENCES = NUMBER_OF_TEAMS * NUMBER_OF_TEAMMATES
+OUTPUT_FILENAME = '34Teams6Rounds'
+USE_NAME_LIST = True
 
 
 # ID and Number of necessary Teammates for every Team
@@ -20,17 +19,16 @@ availableTeams.append([NUMBER_OF_TEAMS+1, 0])
 # ID and Number of necessary Matches for every Team
 availableMatches = [[x+1, NUMBER_OF_TEAMMATES] for x in range(NUMBER_OF_TEAMS)]
 availableMatches.append([NUMBER_OF_TEAMS+1, 0])
-if TOTALOCCURENCES % 2 == 1:
+if TOTAL_OCCURENCES % 2 == 1:
     availableTeams[NUMBER_OF_TEAMS][1] += 1
     availableMatches[NUMBER_OF_TEAMS][1] += 1
-    TOTALOCCURENCES += 1
-if TOTALOCCURENCES % 4 == 2:
+    TOTAL_OCCURENCES += 1
+if TOTAL_OCCURENCES % 4 == 2:
     availableTeams[NUMBER_OF_TEAMS][1] += 2
     availableMatches[NUMBER_OF_TEAMS][1] += 2
-    TOTALOCCURENCES += 2 
+    TOTAL_OCCURENCES += 2 
 
 
-#------------17.04.24----------------
 def mycontains(l1, l2):
     for i in l2:
         if i in l1:
@@ -223,7 +221,7 @@ def generate_rounds(matches: list[list[list[int]]], roundsWaited: list[list[int]
         for t in nextMatchTeams:
             currentRound.append(t)
         rounds[-1].append(nextMatch)
-        if (len(currentRound) == 12):
+        if (len(currentRound) == (NUMBER_OF_FIELDS * 4)):
             roundsWaitedCopy = copy.deepcopy(roundsWaited)
             adjustRoundsWaited(currentRound, roundsWaitedCopy)
             rounds, success = generate_rounds(matchesCopy, roundsWaitedCopy, [], rounds)
@@ -240,7 +238,7 @@ def generate_rounds(matches: list[list[list[int]]], roundsWaited: list[list[int]
 
 
 def printRoundsToCsv(rounds: list[list[list[int]]], goggleDocPrint: bool):
-    with open(OUTPUTFILENAME+'.csv', 'w') as csvfile:
+    with open(OUTPUT_FILENAME+'.csv', 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', quotechar=';', quoting=csv.QUOTE_MINIMAL)
         # Runde, Feld 1 ,        ,      ,        ,        ,               , , Feld 2 ,        ,      ,        ,        ,                , , Feld 3 ,        ,      ,        ,        ,                
         #      , Team A1, Team A2,      , Team B1, Team B2, Schiedsrichter, , Team A1, Team A2,      , Team B1, Team B2, Schiedsrichter , , Team A1, Team A2,      , Team B1, Team B2, Schiedsrichter 
@@ -279,6 +277,6 @@ def main():
     matches, _ = generate_matches(teammates, getEmptyTeammates(), availableMatches, [])
     rounds, _ = generate_rounds(matches, getNewRoundsWaited(), [], [])
     print("RESULT!!!!!!!!!!!!!!!!!!!!")
-    printRoundsToCsv(rounds, False)
+    printRoundsToCsv(rounds, USE_NAME_LIST)
     
 main()
